@@ -1,7 +1,22 @@
 import streamlit as st
-from streamlit_gsheets import GSheetsConnection
 import pandas as pd
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
 from datetime import date
+
+# --- NEW CONNECTION LOGIC ---
+def get_gsheet_client():
+    # You will use the secrets to store your JSON credentials
+    creds_dict = st.secrets["gcp_service_account"]
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict)
+    client = gspread.authorize(creds)
+    return client
+
+# --- REST OF YOUR FORM CODE ---
+# When submitting:
+# client = get_gsheet_client()
+# sheet = client.open("Your_Sheet_Name").sheet1
+# sheet.append_rows(new_report_df.values.tolist())
 
 # Page config
 st.set_page_config(page_title="Cognify Institute", layout="wide")
