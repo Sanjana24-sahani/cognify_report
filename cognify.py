@@ -8,7 +8,7 @@ import json
 # Page Config
 st.set_page_config(page_title="Cognify Institute Report", layout="wide")
 
-# CSS to make the form look like your document
+# CSS to make the form look professional
 st.markdown("""
     <style>
     .header {text-align: center; color: #1E3A8A; font-weight: bold;}
@@ -23,10 +23,12 @@ st.markdown("<div class='title-box'>TEACHER DAILY CLASS REPORT</div>", unsafe_al
 
 # Connection Function
 def get_gsheet():
+    # This expects your JSON credentials in your Streamlit Secrets as 'gcp_service_account'
     creds_dict = json.loads(st.secrets["gcp_service_account"])
     scope = ["https://spreadsheets.google.com/feeds", 'https://www.googleapis.com/auth/spreadsheets']
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
+    # Ensure your Google Sheet is named 'Cognify_Master'
     return client.open("Cognify_Master").sheet1
 
 # Form Layout
@@ -44,18 +46,41 @@ with st.form("teacher_report"):
     remarks = st.text_area("Remarks")
     
     st.markdown("### STUDENT ATTENDANCE")
-    # Attendance table structure
-    df = pd.DataFrame(columns=["Student ID", "Student Name", "Status", "Late / Remarks"])
-    edited_df = st.data_editor(df, num_rows=10, use_container_width=True)
+    
+    # 20 initial rows, dynamic for adding more
+    data = {
+        "Student ID": ["" for _ in range(10)],
+        "Student Name": ["" for _ in range(10)],
+        "Status": [None for _ in range(10)],
+        "Late / Remarks": ["" for _ in range(10)]
+    }
+    df = pd.DataFrame(data)
+    
+    edited_df = st.data_editor(
+        df, 
+        num_rows="dynamic", 
+        use_container_width=True,
+        column_config={
+            "Status": st.column_config.SelectboxColumn(
+                "Status (P/A/L/O)",
+                options=["P", "A", "L", "O"],
+                required=False,
+            )
+        }
+    )
     
     submitted = st.form_submit_button("SUBMIT REPORT")
 
 if submitted:
     try:
         sheet = get_gsheet()
-        for _, row in edited_df.iterrows():
+        # Filter only rows where a Student Name was actually entered
+        valid_rows = edited_df[edited_df["Student Name"].str.strip() != ""]
+        
+        for _, row in valid_rows.iterrows():
             sheet.append_row([str(date_input), class_name, subject, teacher, topic, homework, remarks, 
                              row["Student ID"], row["Student Name"], row["Status"], row["Late / Remarks"]])
-        st.success("Report saved to Google Sheets!")
+        st.success("✅ Report submitted to Google Sheets successfully!")
+        st.balloons()
     except Exception as e:
         st.error(f"Connection Error: {e}")
