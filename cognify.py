@@ -1,99 +1,61 @@
 import streamlit as st
-from streamlit_gsheets import GSheetsConnection
 import pandas as pd
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
 from datetime import date
+import json
 
-# Page config
-st.set_page_config(page_title="Cognify Institute", layout="wide")
+# Page Config
+st.set_page_config(page_title="Cognify Institute Report", layout="wide")
 
-# Custom CSS to hide "Ctrl+Enter" and style the app
+# CSS to make the form look like your document
 st.markdown("""
     <style>
-    .stTextArea div[data-baseweb="base-input"] + div { display: none; }
-    .main-title {text-align: center; color: #1E3A8A; margin-bottom: 0;}
-    .section-header {background-color: #1E3A8A; color: white; padding: 10px; text-align: center; border-radius: 5px;}
+    .header {text-align: center; color: #1E3A8A; font-weight: bold;}
+    .sub-header {text-align: center; font-style: italic; margin-bottom: 20px;}
+    .title-box {background-color: #1E3A8A; color: white; padding: 10px; text-align: center; border-radius: 5px; margin-bottom: 20px;}
     </style>
     """, unsafe_allow_html=True)
 
-st.markdown("<h1 class='main-title'>COGNIFY INSTITUTE</h1>", unsafe_allow_html=True)
-st.markdown("<div class='section-header'>TEACHER DAILY CLASS REPORT</div><br>", unsafe_allow_html=True)
+st.markdown("<h1 class='header'>COGNIFY INSTITUTE</h1>", unsafe_allow_html=True)
+st.markdown("<p class='sub-header'>Excellence in Academic Learning</p>", unsafe_allow_html=True)
+st.markdown("<div class='title-box'>TEACHER DAILY CLASS REPORT</div>", unsafe_allow_html=True)
 
-# Establishing Google Sheets Connection
-# Note: You will need to set up your secrets/credentials in Streamlit
-conn = st.connection("gsheets", type=GSheetsConnection)
+# Connection Function
+def get_gsheet():
+    creds_dict = json.loads(st.secrets["gcp_service_account"])
+    scope = ["https://spreadsheets.google.com/feeds", 'https://www.googleapis.com/auth/spreadsheets']
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+    client = gspread.authorize(creds)
+    return client.open("Cognify_Master").sheet1
 
-with st.form("class_report_form"):
-    col1, col2 = st.columns(2)
-    with col1:
-        report_date = st.date_input("Date", date.today())
+# Form Layout
+with st.form("teacher_report"):
+    c1, c2 = st.columns(2)
+    with c1:
+        date_input = st.date_input("Date")
         subject = st.text_input("Subject")
-        teacher_name = st.text_input("Teacher Name")
-    with col2:
+        teacher = st.text_input("Teacher Name")
+    with c2:
         class_name = st.text_input("Class")
-        topic_covered = st.text_area("Topic Covered")
+        topic = st.text_area("Topic Covered", height=100)
     
     homework = st.text_input("Homework Given")
-    remarks = st.text_area("General Remarks")
-
-    st.markdown("### STUDENT ATTENDANCE")
+    remarks = st.text_area("Remarks")
     
-    # Pre-define empty rows for the teacher
-    input_data = pd.DataFrame(
-        {"Student ID": ["" for _ in range(15)], 
-         "Student Name": ["" for _ in range(15)], 
-         "Status": [None for _ in range(15)], 
-         "Late / Remarks": ["" for _ in range(15)]}
-    )
+    st.markdown("### STUDENT ATTENDANCE")
+    # Attendance table structure
+    df = pd.DataFrame(columns=["Student ID", "Student Name", "Status", "Late / Remarks"])
+    edited_df = st.data_editor(df, num_rows=10, use_container_width=True)
+    
+    submitted = st.form_submit_button("SUBMIT REPORT")
 
-    edited_df = st.data_editor(
-        input_data, 
-        num_rows="dynamic", 
-        use_container_width=True,
-        column_config={
-            "Status": st.column_config.SelectboxColumn(
-                "Status", options=["P", "A", "L", "O"], required=True
-            )
-        }
-    )
-
-    submit_button = st.form_submit_button("SUBMIT TO CLOUD")
-
-if submit_button:
-    if not teacher_name or not subject:
-        st.error("Please enter Teacher Name and Subject.")
-    else:
-        # Filter valid rows
-        valid_df = edited_df.dropna(subset=["Status"])
-        valid_df = valid_df[valid_df["Student Name"].str.strip() != ""]
-
-        if valid_df.empty:
-            st.warning("No student attendance recorded.")
-        else:
-            # Prepare data for Google Sheets
-            new_rows = []
-            for _, row in valid_df.iterrows():
-                new_rows.append({
-                    "Date": str(report_date),
-                    "Teacher": teacher_name,
-                    "Class": class_name,
-                    "Subject": subject,
-                    "Topic": topic_covered,
-                    "Homework": homework,
-                    "Remarks": remarks,
-                    "Student ID": row["Student ID"],
-                    "Student Name": row["Student Name"],
-                    "Status": row["Status"],
-                    "Attendance Note": row["Late / Remarks"]
-                })
-            
-            new_report_df = pd.DataFrame(new_rows)
-            
-            # Fetch existing data from Google Sheet
-            existing_data = conn.read(worksheet="Sheet1")
-            
-            # Combine and Update
-            updated_df = pd.concat([existing_data, new_report_df], ignore_index=True)
-            conn.update(worksheet="Sheet1", data=updated_df)
-            
-            st.success("✅ Data successfully synced with Google Sheets!")
-            st.balloons()
+if submitted:
+    try:
+        sheet = get_gsheet()
+        for _, row in edited_df.iterrows():
+            sheet.append_row([str(date_input), class_name, subject, teacher, topic, homework, remarks, 
+                             row["Student ID"], row["Student Name"], row["Status"], row["Late / Remarks"]])
+        st.success("Report saved to Google Sheets!")
+    except Exception as e:
+        st.error(f"Connection Error: {e}")
