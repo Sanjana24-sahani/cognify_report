@@ -79,26 +79,13 @@ with st.form("teacher_report"):
 
 if submitted:
     try:
-        client = connect_to_sheets(get_gsheet())
+        # Just call the function that returns your client
+        client = get_gsheet()
+        
+        # Now you can open the sheet
         sheet = client.open("Cognify_Master").worksheet("Attendance")
-
-        rows_to_add = []
-
-        for student, status in attendance_data:
-            rows_to_add.append([
-                str(date_input),
-                teacher,
-                class_name,
-                subject,
-                student,
-                status,
-                topic,
-                homework
-            ])
-
-        sheet.append_rows(rows_to_add)
-
-        st.success("Attendance submitted successfully!")
-
+        
+        # ... your rows_to_add logic ...
+        
     except Exception as e:
         st.error(f"Submission failed: {e}")
