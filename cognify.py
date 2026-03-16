@@ -77,7 +77,7 @@ with st.form("teacher_report"):
     
     submitted = st.form_submit_button("SUBMIT REPORT")
 
-if submit:
+if submitted:
     try:
         client = connect_to_sheets()
         sheet = client.open("Cognify_Master").worksheet("Attendance")
