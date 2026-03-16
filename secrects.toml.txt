@@ -1,0 +1,15 @@
+# .streamlit/secrets.toml
+
+[connections.gsheets]
+spreadsheet = "https://docs.google.com/spreadsheets/d/1JkaTyPvux0i88EfnjvRGr3jB2HCX9TRTdn0RoAzSBf4"
+worksheet = "<worksheet-gid-or-folder-id>"  # worksheet GID is used when using Public Spreadsheet URL, when usign service_account it will be picked as folder_id
+type = "service_account"  # leave empty when using Public Spreadsheet URL, when using service_account -> type = "service_account"
+project_id = "cognifyreports"
+private_key_id = "ba13d8a6141486a7f6a433c3bd01b9e51633a2fe"
+private_key = "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC1P2J9nJ9Sodhu\n5PhJSBVo1QYxG2AuYEk4voSeW0FNAI5iEnxFTnYXK8JKru0mBcCbS01nwUU3sJya\nF5DaA8Ge0NZoUows2aeRHnocvcRyob/JgVxxnEDTdD1YZo2e/m8K0rydXuX0kpzC\nM+scASGTjCn+YJgK4lhnE90n9txZek3Wuk2BCoFSM54q9Pow+uFfkHrg1Ug0Bq8j\nP0aqW7EK/5wY37moiTQIiA67y0Pg6nP8/ntZASdHtBkdoTZyxA3oOsd5vMzH3N5h\nd8LIuefvgyMn0RoAync/OaZ9hAsimk7206abTPwpOiq1v9qF2HVbJiLp2e7oYQgL\nl0JvErjVAgMBAAECggEADX8Y+5yS7/QgVJr/8skHhcUTJHX9krErKAARNQ+Q4cXa\n/xTm+cGOy/PqEGX36n8UKXGROTAsUiojHIWzt3Wp0ISMQBF24bdwIb92Erd+LkEQ\nMdZMXCNpX7WbWdQCfhFD6IzqbFeO4nLxHF8BsMCpej4Tjx8smJGOnq0H02baYAk6\nMt6QrjWQaWmQQQ9aLPV4cJbN9v2bBSaWsOANQ8AFRwk88ZgdJhTHnI01siVmhi1/\nIm69I3nv+WgRA0zNrq42ul7aydDocn1vKE9Enc96SSjpjDubMQEbBjFifSOZ6Fai\nNmmT/l1xKwxDttTMLUkDdVOErm8ONyyUKJi+cQJIwwKBgQDe6aJL/+t2mLTs/2Kz\n1NnsXPDXLfsutQyeWgqGNhsXZCahUU6+dMV8/jKcPIutpBgj2xBTLmbN0bBsPEVq\niFYnmuknREjL8e8/bXCz3VhyoY+uiupqGuyz+4/ivI8pYKnLYZ/seebeUTAYtRs5\nDPQsELDyrUfaYzhwUtipJWbAJwKBgQDQJom/fXQzKV617bf/KLsAxmhJFutOFGVA\nsuPoaSJJh3N8E/MkZ+bplT/4dEMlIICV9PI1uVx8zJNMdlIMlmyr8ptzdmt7jlJS\ngqCxHy+eaj3EjNLafwIfc3KdJNtMOz6jOsbbZmsiHGdDqm3Ue4flduPoYad5kSNq\nuvqkj8KgowKBgQCP4SNlhKk54nUdZ/YQdvm2S4MUkNRJIIkliJ60ZCX2YilhBHcc\nDYkPFZAbMiVCDeGa+yG9XvzyKj+CjSCNE7TwWVfWhYerQ9yWBxCwt9UIIGn6UiXe\nGMThoyULR4PsRD00Ti4IV+KBasvtlrAckdTkwF1GNjxjpJlgPskj3EVHDwKBgCsn\nQjmb9cJBmmwXS6UvuY1QlQBKKyB15AQE0nE1krExzsRzkl4C2IGmuqt01xLUaTQt\noyV2N3F8LDGW+i235fHEC2xlqaTk/bYzdMMj1wh9uC6Oj4xS9oq0sZdYs8pbIgJP\nRjjoQ9+/ib0ikUCTF7p/6oIb9M+kQnZ3K02ArHYHAoGBAIxsz80GLBWEdafGQlXO\nXs9c0jLU2WyDtsw4HWfu7/qbo2IG9xw/yinedVU1Io5JWO3zhuNY+5gQXMYiFlpf\nHCIOW2lOHH/b7U9fn4ZMpnYq6KYq+wbVycwbF7wBYWjR+cbp1aqrotak5+IVrVHe\nlt4z62c7D2AB6ekx4+kzxH5r\n-----END PRIVATE KEY-----\n"
+client_email = "gsheet-python-access@cognifyreports.iam.gserviceaccount.com"
+client_id = "100178346856633098633"
+auth_uri = "https://accounts.google.com/o/oauth2/auth"
+token_uri = "https://oauth2.googleapis.com/token"
+auth_provider_x509_cert_url = "https://www.googleapis.com/oauth2/v1/certs"
+client_x509_cert_url = "https://www.googleapis.com/robot/v1/metadata/x509/gsheet-python-access%40cognifyreports.iam.gserviceaccount.com"
