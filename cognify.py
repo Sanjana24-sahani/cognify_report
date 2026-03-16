@@ -79,13 +79,16 @@ with st.form("teacher_report"):
 
 if submitted:
     try:
-        # Just call the function that returns your client
+        # 1. Connect
         client = get_gsheet()
-        
-        # Now you can open the sheet
         sheet = client.open("Cognify_Master").worksheet("Attendance")
         
-        # ... your rows_to_add logic ...
+        # 2. Perform the action (Don't save this to a variable!)
+        sheet.append_rows(rows_to_add)
+        
+        # 3. If the code reaches here without crashing, it worked!
+        st.success("Attendance submitted successfully!")
         
     except Exception as e:
+        # This only triggers if something truly breaks (like a network timeout)
         st.error(f"Submission failed: {e}")
