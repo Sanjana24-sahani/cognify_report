@@ -79,7 +79,7 @@ with st.form("teacher_report"):
 
 if submitted:
     try:
-        client = connect_to_sheets()
+        client = connect_to_sheets(get_gsheet())
         sheet = client.open("Cognify_Master").worksheet("Attendance")
 
         rows_to_add = []
