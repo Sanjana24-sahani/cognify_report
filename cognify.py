@@ -35,6 +35,26 @@ def get_gsheet():
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
     return client.open("Cognify_Master").sheet1
+if submitted:
+    try:
+        # 1. Get the sheet object
+        sheet = get_gsheet() 
+        
+        # 2. Add the rows directly to the sheet object
+        for _, row in valid_rows.iterrows():
+            sheet.append_row([
+                str(date_input), class_name, subject, teacher, 
+                topic, homework, remarks, 
+                row["Student ID"], row["Student Name"], 
+                row["Status"], row["Late / Remarks"]
+            ])
+            
+        # 3. Only show success if no errors occurred
+        st.success("✅ Report submitted to Google Sheets successfully!")
+        
+    except Exception as e:
+        # If it hits this, print the specific error so we can see it
+        st.error(f"Error during submission: {e}")
 
 # Form Layout
 with st.form("teacher_report"):
