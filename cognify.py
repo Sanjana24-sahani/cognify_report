@@ -78,21 +78,13 @@ with st.form("teacher_report"):
 
 if submitted:
     try:
-        # 1. Get the sheet object
-        sheet = get_gsheet() 
+        sheet = get_gsheet()
         
-        # 2. Add the rows directly to the sheet object
-        for _, row in valid_rows.iterrows():
-            sheet.append_row([
-                str(date_input), class_name, subject, teacher, 
-                topic, homework, remarks, 
-                row["Student ID"], row["Student Name"], 
-                row["Status"], row["Late / Remarks"]
-            ])
-            
-        # 3. Only show success if no errors occurred
-        st.success("✅ Report submitted to Google Sheets successfully!")
+        # Perform the action, but don't save the result into a variable
+        sheet.append_row([date_input, teacher, subject, class_name, topic, homework])
+        
+        # Display a success message manually
+        st.success("✅ Report saved successfully!")
         
     except Exception as e:
-        # If it hits this, print the specific error so we can see it
-        st.error(f"Error during submission: {e}")
+        st.error(f"Error: {e}")
