@@ -79,16 +79,35 @@ with st.form("teacher_report"):
 
 if submitted:
     try:
-        # 1. Connect
-        client = get_gsheet()
-        sheet = client.open("Cognify_Master").worksheet("Attendance")
+        # 1. Connect to the sheet
+        # We call get_gsheet() which returns the specific sheet object
+        sheet = get_gsheet()
         
-        # 2. Perform the action (Don't save this to a variable!)
-        sheet.append_rows(rows_to_add)
+        # 2. Prepare the data from the data editor
+        rows_to_add = []
+        for index, row in edited_df.iterrows():
+            # Skip empty rows if needed
+            if row["Student ID"] != "":
+                rows_to_add.append([
+                    str(date_input),
+                    teacher,
+                    class_name,
+                    subject,
+                    row["Student ID"],
+                    row["Student Name"],
+                    row["Status"],
+                    row["Late / Remarks"],
+                    topic,
+                    homework,
+                    remarks
+                ])
         
-        # 3. If the code reaches here without crashing, it worked!
-        st.success("Attendance submitted successfully!")
-        
+        # 3. Append the data to the sheet
+        if rows_to_add:
+            sheet.append_rows(rows_to_add)
+            st.success("✅ Attendance submitted successfully!")
+        else:
+            st.warning("⚠️ No data to submit. Please fill in the Student ID.")
+            
     except Exception as e:
-        # This only triggers if something truly breaks (like a network timeout)
         st.error(f"Submission failed: {e}")
