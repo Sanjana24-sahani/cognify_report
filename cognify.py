@@ -23,10 +23,15 @@ st.markdown("<div class='title-box'>TEACHER DAILY CLASS REPORT</div>", unsafe_al
 
 # Connection Function
 def get_gsheet():
-    # Convert the Streamlit secret object into a standard dictionary
+    # Use the dictionary constructor to avoid the AttrDict error
     creds_dict = dict(st.secrets["gcp_service_account"])
     
-    scope = ["https://spreadsheets.google.com/feeds", 'https://www.googleapis.com/auth/spreadsheets']
+    # These two scopes are REQUIRED for full access
+    scope = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive.file"
+    ]
+    
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
     return client.open("Cognify_Master").sheet1
