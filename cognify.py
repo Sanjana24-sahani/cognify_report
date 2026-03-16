@@ -37,7 +37,6 @@ def get_gsheet():
     return client.open("Cognify_Master").sheet1
 
 # Form Layout
-submit = False
 
 with st.form("teacher_report"):
     c1, c2 = st.columns(2)
