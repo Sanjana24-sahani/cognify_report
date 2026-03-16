@@ -23,12 +23,12 @@ st.markdown("<div class='title-box'>TEACHER DAILY CLASS REPORT</div>", unsafe_al
 
 # Connection Function
 def get_gsheet():
-    # This expects your JSON credentials in your Streamlit Secrets as 'gcp_service_account'
-    creds_dict = json.loads(st.secrets["gcp_service_account"])
+    # Convert the Streamlit secret object into a standard dictionary
+    creds_dict = dict(st.secrets["gcp_service_account"])
+    
     scope = ["https://spreadsheets.google.com/feeds", 'https://www.googleapis.com/auth/spreadsheets']
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
-    # Ensure your Google Sheet is named 'Cognify_Master'
     return client.open("Cognify_Master").sheet1
 
 # Form Layout
