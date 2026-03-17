@@ -34,7 +34,7 @@ def get_gsheet():
     
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
-    return client.open("Cognify_Master").sheet1
+    return client.open("Cognify_Master").Attendance
 
 # Form Layout
 
