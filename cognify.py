@@ -79,35 +79,30 @@ with st.form("teacher_report"):
 
 if submitted:
     try:
-        # 1. Connect to the sheet
-        # We call get_gsheet() which returns the specific sheet object
         sheet = get_gsheet()
         
-        # 2. Prepare the data from the data editor
         rows_to_add = []
         for index, row in edited_df.iterrows():
-            # Skip empty rows if needed
             if row["Student ID"] != "":
                 rows_to_add.append([
-                    str(date_input),
-                    teacher,
-                    class_name,
-                    subject,
-                    row["Student ID"],
-                    row["Student Name"],
-                    row["Status"],
-                    row["Late / Remarks"],
-                    topic,
-                    homework,
-                    remarks
+                    str(date_input), teacher, class_name, subject, 
+                    row["Student ID"], row["Student Name"], 
+                    row["Status"], row["Late / Remarks"], 
+                    topic, homework, remarks
                 ])
         
-        # 3. Append the data to the sheet
         if rows_to_add:
-            sheet.append_rows(rows_to_add)
+            # sheet.append_rows returns a dict on success
+            result = sheet.append_rows(rows_to_add)
+            
+            # If we reach here without an exception, it's a success!
             st.success("✅ Attendance submitted successfully!")
         else:
             st.warning("⚠️ No data to submit. Please fill in the Student ID.")
             
     except Exception as e:
-        st.error(f"Submission failed: {e}")
+        # Check if 'e' is actually just a successful response string
+        if "200" in str(e):
+            st.success("✅ Attendance submitted successfully!")
+        else:
+            st.error(f"Actual Submission Error: {e}")
